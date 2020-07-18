@@ -15,38 +15,50 @@ import(
 	"encoding/json"
 )
 
-func crearArticuloSuplidor(w http.ResponseWriter, r *http.Request){
-	tiempoEntrega64,_:=strconv.ParseInt(r.FormValue("tiempoEntrega"),10,32)
-	tiempoEntrega:=int32(tiempoEntrega64)
-	precio,_:=strconv.ParseFloat(r.FormValue("precio"),64)
+func getAllArticuloSuplidor(w http.ResponseWriter, r *http.Request){
+	colSuplidor:=Client.Database("ordenesCompra").Collection("ArticuloSuplidor");
+	res,err:=colSuplidor.Find(context.TODO(),bson.D{});
+	var resultados []bson.M;
+	if err = res.All(context.TODO(), &resultados); err != nil {
+		error,_:=json.Marshal(err);
+		fmt.Fprintf(w,"{\"error\":\""+string(error)+"\"}");
+	}
+	//	fmt.Fprintf(w,"%++v\n",resultados);
+	json.NewEncoder(w).Encode(resultados)
+
+}
+
+func createArticuloSuplidor(w http.ResponseWriter, r *http.Request){
+	tiempoEntrega64,_:=strconv.ParseInt(r.FormValue("tiempoEntrega"),10,32);
+	tiempoEntrega:=int32(tiempoEntrega64);
+	precio,_:=strconv.ParseFloat(r.FormValue("precio"),64);
 	artSupl:=ArticuloSuplidor{r.FormValue("codigoArt"),r.FormValue("codigoSupl"),tiempoEntrega,precio}
-	colSuplidor:=Client.Database("ordenesCompra").Collection("ArticuloSuplidor")
-	fmt.Printf("%+v",artSupl)
-	res,err:=colSuplidor.InsertOne(context.TODO(),artSupl)
+	colSuplidor:=Client.Database("ordenesCompra").Collection("ArticuloSuplidor");
+	fmt.Printf("%+v",artSupl);
+	res,err:=colSuplidor.InsertOne(context.TODO(),artSupl);
 	if err!=nil{
-		error,_:=json.Marshal(err)
-		fmt.Fprintf(w,"{error:"+string(error)+"}");
+		w.WriteHeader(http.StatusInternalServerError);
+		json.NewEncoder(w).Encode(err.Error());
 	}else{
-		resID,_:=json.Marshal(res.InsertedID)
-		fmt.Fprintf(w,"{insertedId: "+string(resID)+"}");
+		json.NewEncoder(w).Encode(res)
 	}
 }
 
-func borrarArticuloSuplidor(w http.ResponseWriter, r *http.Request){
+func deleteArticuloSuplidor(w http.ResponseWriter, r *http.Request){
 	opts := options.Delete().SetCollation(&options.Collation{
 		Locale:    "en_US",
 		Strength:  1,
 		CaseLevel: false,
 	})
 	
-	colSuplidor:=Client.Database("ordenesCompra").Collection("ArticuloSuplidor")
-	res,err:=colSuplidor.DeleteOne(context.TODO(),bson.D{{"codigosuplidor",mux.Vars(r)["codigoSupl"]}},opts)
-	fmt.Printf("%+v",res)
+	colSuplidor:=Client.Database("ordenesCompra").Collection("ArticuloSuplidor");
+	res,err:=colSuplidor.DeleteOne(context.TODO(),bson.D{{"codigosuplidor",mux.Vars(r)["codigoSupl"]}},opts);
+	fmt.Printf("%+v",res);
 	if err!=nil{
-		error,_:=json.Marshal(err)
+		error,_:=json.Marshal(err);
 		fmt.Fprintf(w,"{error:"+string(error)+"}");
 	}else{
-		fmt.Fprintf(w,"{docsDeleted:"+string(res.DeletedCount)+"}")
+		json.NewEncoder(w).Encode(res)
 	}
 	
 }
