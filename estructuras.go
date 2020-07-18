@@ -14,3 +14,30 @@ type ArticuloSuplidor struct{
 	TiempoEntrega int32
 	PrecioArticulo float64
 }
+
+type Articulo struct{
+	CodigoArticulo string
+	Descripcion string
+	BalanceActual int32
+	UnidadCompra string
+}
+
+type Suplidor struct{
+	codigoSuplidor string
+	nombreSuplidor string
+}
+
+type ArticuloOrdenado struct{
+	CodigoArticulo string
+	CantidadOrdenada int32
+	UnidadCompra string
+	PrecioArticulo float64
+}
+
+type OrdenCompra struct{
+	CodigoOrdenCompra string
+	FechaRequerida datetime
+	FechaGenerada datetime
+	MontoTotal float64
+	Articulos []ArticuloOrdenado
+}
