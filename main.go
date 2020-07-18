@@ -35,19 +35,24 @@ func ConnectDatabase() {
 	log.Println("Database Connected.")
 }
 
-
-
 func main(){
 	route := mux.NewRouter();
 	ConnectDatabase();
+	route.Use(jsonHead);
 	route.HandleFunc("/",func(w http.ResponseWriter, r *http.Request){
-		fmt.Fprintf(w,"{bret:\"Si.\"}");
+		fmt.Fprintf(w,"{\"Activo\":\"Si.\"}");
 	}).Methods("GET");
-	route.HandleFunc("/insertArtSupl",crearArticuloSuplidor).Methods("POST");
-	route.HandleFunc("/deleteArtSupl/{codigoSupl}",borrarArticuloSuplidor).Methods("DELETE")
+	artSuplRoutes:=route.PathPrefix("/artSupl").Subrouter();
+	artSuplRoutes.HandleFunc("/",getAllArticuloSuplidor).Methods("GET");
+	artSuplRoutes.HandleFunc("/",createArticuloSuplidor).Methods("POST");
+	artSuplRoutes.HandleFunc("/delete/{codigoSupl}",deleteArticuloSuplidor).Methods("DELETE")
 	http.ListenAndServe(":8089", route)
-
 }
 
-
+func jsonHead(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Add("Content-Type", "application/json")
+        next.ServeHTTP(w, r)
+    })
+}
 
