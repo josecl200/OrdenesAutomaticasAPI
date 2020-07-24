@@ -11,7 +11,7 @@ import(
 	"net/http"
 	"github.com/gorilla/mux"
 	//"io/ioutil"
-	"strconv"
+	//"strconv"
 	"encoding/json"
 )
 
@@ -29,10 +29,12 @@ func getAllArticuloSuplidor(w http.ResponseWriter, r *http.Request){
 }
 
 func createArticuloSuplidor(w http.ResponseWriter, r *http.Request){
-	tiempoEntrega64,_:=strconv.ParseInt(r.FormValue("tiempoEntrega"),10,32);
-	tiempoEntrega:=int32(tiempoEntrega64);
-	precio,_:=strconv.ParseFloat(r.FormValue("precio"),64);
-	artSupl:=ArticuloSuplidor{r.FormValue("codigoArt"),r.FormValue("codigoSupl"),tiempoEntrega,precio}
+	artSupl:=new(ArticuloSuplidor)
+	err:=json.NewDecoder(r.Body).Decode(artSupl)
+	if err!=nil{
+		w.WriteHeader(http.StatusInternalServerError);
+		json.NewEncoder(w).Encode(err.Error());
+	}
 	colSuplidor:=Client.Database("ordenesCompra").Collection("ArticuloSuplidor");
 	fmt.Printf("%+v",artSupl);
 	res,err:=colSuplidor.InsertOne(context.TODO(),artSupl);

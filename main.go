@@ -45,7 +45,23 @@ func main(){
 	artSuplRoutes:=route.PathPrefix("/artSupl").Subrouter();
 	artSuplRoutes.HandleFunc("/",getAllArticuloSuplidor).Methods("GET");
 	artSuplRoutes.HandleFunc("/",createArticuloSuplidor).Methods("POST");
-	artSuplRoutes.HandleFunc("/delete/{codigoSupl}",deleteArticuloSuplidor).Methods("DELETE")
+	artSuplRoutes.HandleFunc("/delete/{codigoSupl}",deleteArticuloSuplidor).Methods("DELETE");
+	artRoutes:=route.PathPrefix("/articulo").Subrouter();
+	artRoutes.HandleFunc("/",getAllArticulo).Methods("GET");
+	artRoutes.HandleFunc("/{codigoArticulo}",getAllArticulo).Methods("GET");
+
+	artRoutes.HandleFunc("/",createArticulo).Methods("POST");
+	artRoutes.HandleFunc("/delete/{codigoArt}",deleteArticulo).Methods("DELETE");
+	suplRoutes:=route.PathPrefix("/suplidor").Subrouter();
+	suplRoutes.HandleFunc("/",getAllSuplidores).Methods("GET");
+	suplRoutes.HandleFunc("/",createSuplidor).Methods("POST");
+	suplRoutes.HandleFunc("/delete/{codigoSuplidor}",deleteArticulo).Methods("DELETE");
+	movRoutes:=route.PathPrefix("/moviemiento").Subrouter();
+	movRoutes.HandleFunc("/",getAllMovimientos).Methods("GET");
+	movRoutes.HandleFunc("/{codigoArticulo}",getAllMovimientos).Methods("GET");
+	movRoutes.HandleFunc("/",createMovimiento).Methods("POST");
+	orderRoutes:=route.PathPrefix("/orden").Subrouter();
+	orderRoutes.HandleFunc("/",createOrdenes).Methods("POST");
 	http.ListenAndServe(":8089", route)
 }
 
