@@ -1,11 +1,15 @@
 package main
-type MovimientoInventario struct{ 
-	CodigoMovimiento string
-	CodigoAlmacen string
-	TipoMovimiento string
-	CodigoArticulo string
-	Cantidad int32
-	Unidad string //lb,caja,etc
+import(
+	"time"
+)
+type MovimientoInventario struct
+{ 
+	CodigoMovimiento string `bson:"codigomovimiento"`
+	TipoMovimiento string `bson:"tipomovimiento"`
+	CodigoArticulo string `bson:"codigoarticulo"`
+	Cantidad int32 `bson:"cantidad"`
+	Fecha time.Time
+	Unidad string `bson:"unidad"`//lb,caja,etc
 }
 
 type ArticuloSuplidor struct{
@@ -23,21 +27,20 @@ type Articulo struct{
 }
 
 type Suplidor struct{
-	codigoSuplidor string
-	nombreSuplidor string
+	CodigoSuplidor string
+	NombreSuplidor string
 }
 
-type ArticuloOrdenado struct{
+type OrdenCompra struct
+{
+	CodigoOrdenCompra string
+	FechaRequerida time.Time
+	FechaGenerada time.Time
+	FechaAOrdenar time.Time
+	CodigoSuplidor string
 	CodigoArticulo string
 	CantidadOrdenada int32
 	UnidadCompra string
 	PrecioArticulo float64
-}
-
-type OrdenCompra struct{
-	CodigoOrdenCompra string
-	FechaRequerida datetime
-	FechaGenerada datetime
 	MontoTotal float64
-	Articulos []ArticuloOrdenado
 }
