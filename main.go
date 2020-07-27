@@ -6,13 +6,8 @@ import(
 	"time"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	//"go.mongodb.org/mongo-driver/mongo/readpref"
-	//"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"github.com/gorilla/mux"
-	//"io/ioutil"
-	//"strconv"
-	//"encoding/json"
 )
 
 
@@ -49,7 +44,6 @@ func main(){
 	artRoutes:=route.PathPrefix("/articulo").Subrouter();
 	artRoutes.HandleFunc("/",getAllArticulo).Methods("GET");
 	artRoutes.HandleFunc("/{codigoArticulo}",getAllArticulo).Methods("GET");
-
 	artRoutes.HandleFunc("/",createArticulo).Methods("POST");
 	artRoutes.HandleFunc("/delete/{codigoArt}",deleteArticulo).Methods("DELETE");
 	suplRoutes:=route.PathPrefix("/suplidor").Subrouter();
@@ -61,7 +55,9 @@ func main(){
 	movRoutes.HandleFunc("/{codigoArticulo}",getAllMovimientos).Methods("GET");
 	movRoutes.HandleFunc("/",createMovimiento).Methods("POST");
 	orderRoutes:=route.PathPrefix("/orden").Subrouter();
+	orderRoutes.HandleFunc("/",getAllOrdenes).Methods("GET")
 	orderRoutes.HandleFunc("/",createOrdenes).Methods("POST");
+	
 	http.ListenAndServe(":8089", route)
 }
 
